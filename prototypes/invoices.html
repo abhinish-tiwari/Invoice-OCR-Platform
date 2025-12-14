@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoices - Invoice OCR Platform</title>
+  <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <style>
+    .page-actions {
+      display: flex;
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+
+    .search-box {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: var(--space-4);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-400);
+    }
+
+    .search-box input {
+      padding-left: var(--space-10);
+    }
+
+    .filters {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .table-container {
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    th {
+      padding: var(--space-4) var(--space-6);
+      text-align: left;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--gray-700);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      padding: var(--space-4) var(--space-6);
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr {
+      transition: background-color var(--transition-fast);
+    }
+
+    tbody tr:hover {
+      background-color: var(--gray-50);
+    }
+
+    .invoice-supplier {
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: var(--space-1);
+    }
+
+    .invoice-number {
+      font-size: var(--text-sm);
+      color: var(--gray-600);
+    }
+
+    .invoice-amount {
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    .btn-icon {
+      padding: var(--space-2);
+      background: var(--gray-100);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-icon:hover {
+      background: var(--primary-100);
+      color: var(--primary-600);
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-6);
+      background: white;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .pagination-info {
+      color: var(--gray-600);
+      font-size: var(--text-sm);
+    }
+
+    .pagination-buttons {
+      display: flex;
+      gap: var(--space-2);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <span style="font-size: var(--text-2xl);">🧾</span>
+        <span>Invoice OCR</span>
+      </div>
+      
+      <ul class="sidebar-menu">
+        <li class="sidebar-item">
+          <a href="dashboard.html" class="sidebar-link">
+            <span class="sidebar-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="invoices.html" class="sidebar-link active">
+            <span class="sidebar-icon">📄</span>
+            <span>Invoices</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="upload.html" class="sidebar-link">
+            <span class="sidebar-icon">⬆️</span>
+            <span>Upload Invoice</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="admin-review.html" class="sidebar-link">
+            <span class="sidebar-icon">✅</span>
+            <span>Admin Review</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link">
+            <span class="sidebar-icon">⚙️</span>
+            <span>Settings</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="login.html" class="sidebar-link">
+            <span class="sidebar-icon">🚪</span>
+            <span>Logout</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="page-header">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="page-title">Invoices</h1>
+            <p class="page-subtitle">Manage and track all your invoices</p>
+          </div>
+          <a href="upload.html" class="btn btn-primary">
+            ⬆️ Upload Invoice
+          </a>
+        </div>
+      </div>
+
+      <!-- Search and Filters -->
+      <div class="page-actions">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="text" 
+            class="form-input" 
+            placeholder="Search invoices by supplier, number, or amount..."
+          >
+        </div>
+        <div class="filters">
+          <select class="form-select" style="width: 180px;">
+            <option>All Statuses</option>
+            <option>Processed</option>
+            <option>Needs Review</option>
+            <option>Failed</option>
+          </select>
+          <select class="form-select" style="width: 180px;">
+            <option>All Suppliers</option>
+            <option>Sysco Foods</option>
+            <option>US Foods</option>
+            <option>Restaurant Depot</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Invoices Table -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Supplier</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Confidence</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="invoice-supplier">Sysco Foods</div>
+                <div class="invoice-number">INV-2024-001</div>
+              </td>
+              <td>Jan 15, 2024</td>
+              <td class="invoice-amount">$1,245.00</td>
+              <td><span class="badge badge-success">Processed</span></td>
+              <td><span class="badge badge-success">High (95%)</span></td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn-icon" title="View">👁️</button>
+                  <button class="btn-icon" title="Download">⬇️</button>
+                  <button class="btn-icon" title="Edit">✏️</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="invoice-supplier">US Foods</div>
+                <div class="invoice-number">INV-2024-002</div>
+              </td>
+              <td>Jan 14, 2024</td>
+              <td class="invoice-amount">$2,890.50</td>
+              <td><span class="badge badge-warning">Review</span></td>
+              <td><span class="badge badge-warning">Medium (78%)</span></td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn-icon" title="View">👁️</button>
+                  <button class="btn-icon" title="Download">⬇️</button>
+                  <button class="btn-icon" title="Edit">✏️</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="invoice-supplier">Restaurant Depot</div>
+                <div class="invoice-number">INV-2024-003</div>
+              </td>
+              <td>Jan 13, 2024</td>
+              <td class="invoice-amount">$567.25</td>
+              <td><span class="badge badge-success">Processed</span></td>
+              <td><span class="badge badge-success">High (92%)</span></td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn-icon" title="View">👁️</button>
+                  <button class="btn-icon" title="Download">⬇️</button>
+                  <button class="btn-icon" title="Edit">✏️</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pagination">
+          <div class="pagination-info">
+            Showing 1 to 10 of 156 invoices
+          </div>
+          <div class="pagination-buttons">
+            <button class="btn btn-secondary btn-sm">Previous</button>
+            <button class="btn btn-primary btn-sm">1</button>
+            <button class="btn btn-secondary btn-sm">2</button>
+            <button class="btn btn-secondary btn-sm">3</button>
+            <button class="btn btn-secondary btn-sm">Next</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
+

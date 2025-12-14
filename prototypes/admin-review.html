@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Review - Invoice OCR Platform</title>
+  <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <style>
+    .review-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+    }
+
+    .invoice-preview {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: var(--space-8);
+      height: fit-content;
+    }
+
+    .preview-image {
+      width: 100%;
+      height: 600px;
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-500);
+      font-size: var(--text-lg);
+      margin-bottom: var(--space-4);
+    }
+
+    .preview-controls {
+      display: flex;
+      gap: var(--space-2);
+      justify-content: center;
+    }
+
+    .review-form {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .confidence-indicator {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      background: var(--gray-50);
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+    }
+
+    .confidence-indicator.high { background: var(--success-light); color: #065f46; }
+    .confidence-indicator.medium { background: var(--warning-light); color: #92400e; }
+    .confidence-indicator.low { background: var(--error-light); color: #991b1b; }
+
+    .line-items-table {
+      margin-top: var(--space-6);
+    }
+
+    .line-items-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .line-items-table th {
+      background: var(--gray-50);
+      padding: var(--space-3);
+      text-align: left;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .line-items-table td {
+      padding: var(--space-3);
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .line-items-table input {
+      width: 100%;
+      padding: var(--space-2);
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-sm);
+    }
+
+    .line-items-table input:focus {
+      outline: none;
+      border-color: var(--primary-500);
+    }
+
+    .add-line-btn {
+      margin-top: var(--space-3);
+    }
+
+    .review-actions {
+      display: flex;
+      gap: var(--space-3);
+      margin-top: var(--space-8);
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .field-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+    }
+
+    .alert {
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-6);
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+    }
+
+    .alert-warning {
+      background: var(--warning-light);
+      border: 1px solid var(--warning);
+      color: #92400e;
+    }
+
+    .alert-icon {
+      font-size: var(--text-xl);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <span style="font-size: var(--text-2xl);">🧾</span>
+        <span>Invoice OCR</span>
+      </div>
+      
+      <ul class="sidebar-menu">
+        <li class="sidebar-item">
+          <a href="dashboard.html" class="sidebar-link">
+            <span class="sidebar-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="invoices.html" class="sidebar-link">
+            <span class="sidebar-icon">📄</span>
+            <span>Invoices</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="upload.html" class="sidebar-link">
+            <span class="sidebar-icon">⬆️</span>
+            <span>Upload Invoice</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="admin-review.html" class="sidebar-link active">
+            <span class="sidebar-icon">✅</span>
+            <span>Admin Review</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link">
+            <span class="sidebar-icon">⚙️</span>
+            <span>Settings</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="login.html" class="sidebar-link">
+            <span class="sidebar-icon">🚪</span>
+            <span>Logout</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="page-header">
+        <h1 class="page-title">Review Invoice</h1>
+        <p class="page-subtitle">Verify and correct OCR extracted data</p>
+      </div>
+
+      <div class="alert alert-warning">
+        <span class="alert-icon">⚠️</span>
+        <div>
+          <strong>Low Confidence Detection</strong>
+          <p style="margin: 0; font-size: var(--text-sm);">
+            Some fields have low confidence scores. Please review and correct as needed.
+          </p>
+        </div>
+      </div>
+
+      <div class="review-layout">
+        <!-- Invoice Preview -->
+        <div class="invoice-preview">
+          <h3 style="margin-bottom: var(--space-4);">Invoice Preview</h3>
+          <div class="preview-image">
+            📄 Invoice Image Preview<br>
+            <small style="color: var(--gray-400);">US Foods - INV-2024-002</small>
+          </div>
+          <div class="preview-controls">
+            <button class="btn btn-sm btn-secondary">🔍 Zoom In</button>
+            <button class="btn btn-sm btn-secondary">🔍 Zoom Out</button>
+            <button class="btn btn-sm btn-secondary">⬇️ Download</button>
+          </div>
+        </div>
+
+        <!-- Review Form -->
+        <div class="review-form">
+          <h3 style="margin-bottom: var(--space-6);">Invoice Details</h3>
+
+          <form id="reviewForm">
+            <!-- Header Fields -->
+            <div class="form-group">
+              <label class="form-label">
+                Supplier Name
+                <span class="confidence-indicator medium">78% confidence</span>
+              </label>
+              <input type="text" class="form-input" value="US Foods" required>
+            </div>
+
+            <div class="field-group">
+              <div class="form-group">
+                <label class="form-label">
+                  Invoice Number
+                  <span class="confidence-indicator high">95% confidence</span>
+                </label>
+                <input type="text" class="form-input" value="INV-2024-002" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Invoice Date
+                  <span class="confidence-indicator high">92% confidence</span>
+                </label>
+                <input type="date" class="form-input" value="2024-01-14" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Total Amount
+                <span class="confidence-indicator medium">85% confidence</span>
+              </label>
+              <input type="number" class="form-input" value="2890.50" step="0.01" required>
+            </div>
+
+            <!-- Line Items -->
+            <div class="line-items-table">
+              <h4 style="margin-bottom: var(--space-4);">Line Items</h4>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th style="width: 100px;">Qty</th>
+                    <th style="width: 120px;">Unit Price</th>
+                    <th style="width: 120px;">Total</th>
+                    <th style="width: 60px;"></th>
+                  </tr>
+                </thead>
+                <tbody id="lineItems">
+                  <tr>
+                    <td><input type="text" value="Chicken Breast, 10lb" required></td>
+                    <td><input type="number" value="5" required></td>
+                    <td><input type="number" value="45.50" step="0.01" required></td>
+                    <td><input type="number" value="227.50" step="0.01" readonly></td>
+                    <td><button type="button" class="btn-icon">🗑️</button></td>
+                  </tr>
+                  <tr>
+                    <td><input type="text" value="Tomatoes, Fresh 25lb" required></td>
+                    <td><input type="number" value="3" required></td>
+                    <td><input type="number" value="32.00" step="0.01" required></td>
+                    <td><input type="number" value="96.00" step="0.01" readonly></td>
+                    <td><button type="button" class="btn-icon">🗑️</button></td>
+                  </tr>
+                </tbody>
+              </table>
+              <button type="button" class="btn btn-sm btn-secondary add-line-btn">
+                ➕ Add Line Item
+              </button>
+            </div>
+
+            <!-- Actions -->
+            <div class="review-actions">
+              <button type="submit" class="btn btn-success" style="flex: 1;">
+                ✅ Approve & Save
+              </button>
+              <button type="button" class="btn btn-secondary" onclick="window.location.href='invoices.html'">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.getElementById('reviewForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Invoice approved and corrections saved!');
+      window.location.href = 'invoices.html';
+    });
+  </script>
+</body>
+</html>
+

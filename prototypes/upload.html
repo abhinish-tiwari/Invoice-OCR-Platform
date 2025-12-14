@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Invoice - Invoice OCR Platform</title>
+  <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <style>
+    .upload-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .upload-zone {
+      background: white;
+      border: 2px dashed var(--gray-300);
+      border-radius: var(--radius-xl);
+      padding: var(--space-16);
+      text-align: center;
+      transition: all var(--transition-base);
+      cursor: pointer;
+    }
+
+    .upload-zone:hover {
+      border-color: var(--primary-500);
+      background: var(--primary-50);
+    }
+
+    .upload-zone.dragover {
+      border-color: var(--primary-600);
+      background: var(--primary-100);
+    }
+
+    .upload-icon {
+      font-size: 64px;
+      margin-bottom: var(--space-4);
+    }
+
+    .upload-title {
+      font-size: var(--text-xl);
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: var(--space-2);
+    }
+
+    .upload-subtitle {
+      color: var(--gray-600);
+      margin-bottom: var(--space-6);
+    }
+
+    .upload-formats {
+      font-size: var(--text-sm);
+      color: var(--gray-500);
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .uploaded-files {
+      margin-top: var(--space-8);
+    }
+
+    .file-item {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      margin-bottom: var(--space-3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .file-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--primary-100);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--text-2xl);
+    }
+
+    .file-details h4 {
+      font-size: var(--text-base);
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: var(--space-1);
+    }
+
+    .file-details p {
+      font-size: var(--text-sm);
+      color: var(--gray-600);
+      margin: 0;
+    }
+
+    .file-actions {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--gray-200);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-top: var(--space-2);
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary-600);
+      border-radius: var(--radius-full);
+      transition: width var(--transition-base);
+    }
+
+    .processing-status {
+      background: var(--info-light);
+      border: 1px solid var(--info);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      margin-top: var(--space-6);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid var(--info-light);
+      border-top-color: var(--info);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <span style="font-size: var(--text-2xl);">🧾</span>
+        <span>Invoice OCR</span>
+      </div>
+      
+      <ul class="sidebar-menu">
+        <li class="sidebar-item">
+          <a href="dashboard.html" class="sidebar-link">
+            <span class="sidebar-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="invoices.html" class="sidebar-link">
+            <span class="sidebar-icon">📄</span>
+            <span>Invoices</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="upload.html" class="sidebar-link active">
+            <span class="sidebar-icon">⬆️</span>
+            <span>Upload Invoice</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="admin-review.html" class="sidebar-link">
+            <span class="sidebar-icon">✅</span>
+            <span>Admin Review</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link">
+            <span class="sidebar-icon">⚙️</span>
+            <span>Settings</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="login.html" class="sidebar-link">
+            <span class="sidebar-icon">🚪</span>
+            <span>Logout</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="upload-container">
+        <div class="page-header">
+          <h1 class="page-title">Upload Invoice</h1>
+          <p class="page-subtitle">Upload your invoice for automatic OCR processing</p>
+        </div>
+
+        <!-- Upload Zone -->
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon">📤</div>
+          <h3 class="upload-title">Drag & Drop your invoice here</h3>
+          <p class="upload-subtitle">or click to browse files</p>
+          <button class="btn btn-primary">Choose File</button>
+          <p class="upload-formats">Supported formats: PDF, JPG, PNG (Max 10MB)</p>
+        </div>
+
+        <input 
+          type="file" 
+          id="fileInput" 
+          class="file-input" 
+          accept=".pdf,.jpg,.jpeg,.png"
+          multiple
+        >
+
+        <!-- Uploaded Files -->
+        <div class="uploaded-files" id="uploadedFiles" style="display: none;">
+          <h3 style="margin-bottom: var(--space-4);">Uploaded Files</h3>
+          
+          <div class="file-item">
+            <div class="file-info">
+              <div class="file-icon">📄</div>
+              <div class="file-details">
+                <h4>invoice_sysco_jan2024.pdf</h4>
+                <p>2.4 MB • Uploaded just now</p>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 100%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="file-actions">
+              <button class="btn btn-sm btn-secondary">Remove</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Processing Status -->
+        <div class="processing-status" id="processingStatus" style="display: none;">
+          <div class="spinner"></div>
+          <div>
+            <strong>Processing invoice...</strong>
+            <p style="margin: 0; font-size: var(--text-sm); color: var(--gray-600);">
+              Extracting data using OCR. This may take a few moments.
+            </p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-4" style="margin-top: var(--space-8);">
+          <button class="btn btn-primary btn-lg" id="processBtn" style="flex: 1;" disabled>
+            Process Invoices
+          </button>
+          <button class="btn btn-secondary btn-lg" onclick="window.location.href='invoices.html'">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
+    const uploadedFiles = document.getElementById('uploadedFiles');
+    const processBtn = document.getElementById('processBtn');
+    const processingStatus = document.getElementById('processingStatus');
+
+    // Drag and drop
+    uploadZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadZone.classList.add('dragover');
+    });
+
+    uploadZone.addEventListener('dragleave', () => {
+      uploadZone.classList.remove('dragover');
+    });
+
+    uploadZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadZone.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      handleFiles(e.target.files);
+    });
+
+    function handleFiles(files) {
+      if (files.length > 0) {
+        uploadedFiles.style.display = 'block';
+        processBtn.disabled = false;
+      }
+    }
+
+    processBtn.addEventListener('click', () => {
+      processingStatus.style.display = 'flex';
+      processBtn.disabled = true;
+      
+      setTimeout(() => {
+        alert('Invoice processed successfully!');
+        window.location.href = 'invoices.html';
+      }, 3000);
+    });
+  </script>
+</body>
+</html>
+

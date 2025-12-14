@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice OCR Platform - Prototypes</title>
+  <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    body {
+      padding: var(--space-16) var(--space-8);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: var(--space-16);
+    }
+
+    .logo {
+      font-size: 64px;
+      margin-bottom: var(--space-4);
+    }
+
+    .title {
+      font-size: var(--text-4xl);
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: var(--space-2);
+    }
+
+    .subtitle {
+      font-size: var(--text-xl);
+      color: var(--gray-600);
+    }
+
+    .prototype-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--space-6);
+      margin-bottom: var(--space-16);
+    }
+
+    .prototype-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-base);
+      text-align: center;
+    }
+
+    .prototype-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .prototype-icon {
+      font-size: 48px;
+      margin-bottom: var(--space-4);
+    }
+
+    .prototype-title {
+      font-size: var(--text-xl);
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: var(--space-2);
+    }
+
+    .prototype-description {
+      color: var(--gray-600);
+      margin-bottom: var(--space-6);
+      font-size: var(--text-sm);
+    }
+
+    .info-section {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--space-8);
+    }
+
+    .info-section h2 {
+      margin-bottom: var(--space-4);
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+      margin-top: var(--space-6);
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+    }
+
+    .feature-icon {
+      font-size: var(--text-xl);
+    }
+
+    .color-palette {
+      display: flex;
+      gap: var(--space-4);
+      margin-top: var(--space-4);
+    }
+
+    .color-swatch {
+      flex: 1;
+      height: 80px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: var(--text-sm);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">🧾</div>
+    <h1 class="title">Invoice OCR Platform</h1>
+    <p class="subtitle">Interactive HTML/CSS Prototypes</p>
+  </div>
+
+  <div class="info-section">
+    <h2>📱 Available Prototypes</h2>
+    <p>Click on any prototype below to view the interactive design. All prototypes are fully functional with navigation and interactions.</p>
+  </div>
+
+  <div class="prototype-grid">
+    <div class="prototype-card">
+      <div class="prototype-icon">🔐</div>
+      <h3 class="prototype-title">Login Page</h3>
+      <p class="prototype-description">User authentication with email and password</p>
+      <a href="login.html" class="btn btn-primary">View Prototype</a>
+    </div>
+
+    <div class="prototype-card">
+      <div class="prototype-icon">📝</div>
+      <h3 class="prototype-title">Register Page</h3>
+      <p class="prototype-description">New user registration form</p>
+      <a href="register.html" class="btn btn-primary">View Prototype</a>
+    </div>
+
+    <div class="prototype-card">
+      <div class="prototype-icon">📊</div>
+      <h3 class="prototype-title">Dashboard</h3>
+      <p class="prototype-description">Main dashboard with analytics and stats</p>
+      <a href="dashboard.html" class="btn btn-primary">View Prototype</a>
+    </div>
+
+    <div class="prototype-card">
+      <div class="prototype-icon">📄</div>
+      <h3 class="prototype-title">Invoices List</h3>
+      <p class="prototype-description">Browse and manage all invoices</p>
+      <a href="invoices.html" class="btn btn-primary">View Prototype</a>
+    </div>
+
+    <div class="prototype-card">
+      <div class="prototype-icon">⬆️</div>
+      <h3 class="prototype-title">Upload Invoice</h3>
+      <p class="prototype-description">Drag & drop invoice upload</p>
+      <a href="upload.html" class="btn btn-primary">View Prototype</a>
+    </div>
+
+    <div class="prototype-card">
+      <div class="prototype-icon">✅</div>
+      <h3 class="prototype-title">Admin Review</h3>
+      <p class="prototype-description">Review and correct OCR data</p>
+      <a href="admin-review.html" class="btn btn-primary">View Prototype</a>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h2>🎨 Design System</h2>
+    <p>All prototypes use a consistent design system with the following features:</p>
+    
+    <div class="feature-list">
+      <div class="feature-item">
+        <span class="feature-icon">🎨</span>
+        <div>
+          <strong>Color Palette</strong>
+          <p style="margin: 0; font-size: var(--text-sm); color: var(--gray-600);">
+            Primary blue theme with semantic colors
+          </p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">📐</span>
+        <div>
+          <strong>Consistent Spacing</strong>
+          <p style="margin: 0; font-size: var(--text-sm); color: var(--gray-600);">
+            8px grid system for perfect alignment
+          </p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🔤</span>
+        <div>
+          <strong>Typography</strong>
+          <p style="margin: 0; font-size: var(--text-sm); color: var(--gray-600);">
+            Inter font family with clear hierarchy
+          </p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🧩</span>
+        <div>
+          <strong>Reusable Components</strong>
+          <p style="margin: 0; font-size: var(--text-sm); color: var(--gray-600);">
+            Buttons, cards, forms, badges, and more
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: var(--space-8); margin-bottom: var(--space-4);">Color Palette</h3>
+    <div class="color-palette">
+      <div class="color-swatch" style="background: var(--primary-600);">Primary</div>
+      <div class="color-swatch" style="background: var(--success);">Success</div>
+      <div class="color-swatch" style="background: var(--warning);">Warning</div>
+      <div class="color-swatch" style="background: var(--error);">Error</div>
+      <div class="color-swatch" style="background: var(--gray-700);">Gray</div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h2>📝 How to Use</h2>
+    <ol style="line-height: 2;">
+      <li>Open any prototype by clicking the "View Prototype" button</li>
+      <li>Navigate between pages using the sidebar menu</li>
+      <li>All forms and interactions are functional (demo mode)</li>
+      <li>Use these prototypes as reference for Figma designs</li>
+      <li>Copy CSS styles directly from the source code</li>
+    </ol>
+  </div>
+
+  <div class="info-section" style="text-align: center;">
+    <h2>🚀 Ready to Build in Figma?</h2>
+    <p>Use these prototypes as a reference to create your Figma designs. All measurements, colors, and components are production-ready.</p>
+    <a href="README.md" class="btn btn-primary btn-lg" style="margin-top: var(--space-4);">
+      View Documentation
+    </a>
+  </div>
+</body>
+</html>
+
