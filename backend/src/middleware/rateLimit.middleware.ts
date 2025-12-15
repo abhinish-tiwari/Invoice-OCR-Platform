@@ -1,91 +1,47 @@
-import rateLimit from 'express-rate-limit';
+import rateLimit, { Options } from 'express-rate-limit';
+import MESSAGES from '../constants/messages';
 import { Request, Response } from 'express';
 
-/**
- * General API rate limiter
- * 100 requests per 15 minutes
- */
-export const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-  message: {
-    success: false,
-    error: {
-      message: 'Too many requests from this IP, please try again later.',
-      statusCode: 429,
-    },
-  },
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  handler: (_req: Request, res: Response) => {
-    res.status(429).json({
-      success: false,
-      error: {
-        message: 'Too many requests from this IP, please try again later.',
-        statusCode: 429,
-      },
-    });
-  },
+const FIFTEEN_MINUTES = 15 * 60 * 1000;
+const ONE_HOUR = 60 * 60 * 1000;
+
+const createRateLimitResponse = (message: string) => ({
+	success: false,
+	error: {
+		message,
+		statusCode: 429,
+	},
 });
 
-/**
- * Strict rate limiter for authentication endpoints
- * 5 requests per 15 minutes
- */
-export const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 requests per windowMs
-  message: {
-    success: false,
-    error: {
-      message: 'Too many authentication attempts, please try again later.',
-      statusCode: 429,
-    },
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-  skipSuccessfulRequests: true, // Don't count successful requests
-  handler: (_req: Request, res: Response) => {
-    res.status(429).json({
-      success: false,
-      error: {
-        message: 'Too many authentication attempts, please try again later.',
-        statusCode: 429,
-      },
-    });
-  },
-});
-
-/**
- * Rate limiter for file upload endpoints
- * 10 requests per hour
- */
-export const uploadLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10, // Limit each IP to 10 uploads per hour
-  message: {
-    success: false,
-    error: {
-      message: 'Too many upload requests, please try again later.',
-      statusCode: 429,
-    },
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-  handler: (_req: Request, res: Response) => {
-    res.status(429).json({
-      success: false,
-      error: {
-        message: 'Too many upload requests, please try again later.',
-        statusCode: 429,
-      },
-    });
-  },
-});
-
-export default {
-  apiLimiter,
-  authLimiter,
-  uploadLimiter,
+const createRateLimiter = (windowMs: number, max: number, message: string, options: Partial<Options> = {}) => {
+	return rateLimit({
+		windowMs,
+		max,
+		message: createRateLimitResponse(message),
+		standardHeaders: true,
+		legacyHeaders: false,
+		handler: (_req: Request, res: Response) => {
+			res.status(429).json(createRateLimitResponse(message));
+		},
+		...options
+	});
 };
 
+export const apiLimiter = createRateLimiter(
+	FIFTEEN_MINUTES,
+	100,
+	MESSAGES.RATE_LIMIT_MESSAGES.TOO_MANY_REQUESTS
+);
+
+export const authLimiter = createRateLimiter(
+	FIFTEEN_MINUTES,
+	5,
+	MESSAGES.RATE_LIMIT_MESSAGES.AUTH_LIMIT_EXCEEDED,
+	{ skipSuccessfulRequests: true }
+);
+
+export const uploadLimiter = createRateLimiter(
+	ONE_HOUR,
+	10,
+	MESSAGES.RATE_LIMIT_MESSAGES.UPLOAD_LIMIT_EXCEEDED
+);

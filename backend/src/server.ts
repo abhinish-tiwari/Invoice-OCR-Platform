@@ -8,10 +8,11 @@ const PORT = env.PORT || 3000;
 /**
  * Start the server
  */
-const startServer = async () => {
+const startServer = async (): Promise<void> => {
   try {
     // Test database connection
     const dbConnected = await testConnection();
+    
     if (!dbConnected) {
       logger.error('Failed to connect to database. Exiting...');
       process.exit(1);
@@ -22,8 +23,6 @@ const startServer = async () => {
       logger.info('='.repeat(50));
       logger.info(`🚀 Server running on port ${PORT}`);
       logger.info(`📝 Environment: ${env.NODE_ENV}`);
-      logger.info(`🔗 Health check: http://localhost:${PORT}/health`);
-      logger.info(`🔗 API Base URL: http://localhost:${PORT}/api/v1`);
       logger.info('='.repeat(50));
     });
   } catch (error) {
@@ -32,19 +31,25 @@ const startServer = async () => {
   }
 };
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
+/**
+ * Handle unhandled promise rejections
+ */
+process.on('unhandledRejection', (reason: unknown, promise: Promise<unknown>) => {
   logger.error('Unhandled Rejection at:', { promise, reason });
   process.exit(1);
 });
 
-// Handle uncaught exceptions
+/**
+ * Handle uncaught exceptions
+ */
 process.on('uncaughtException', (error: Error) => {
   logger.error('Uncaught Exception:', error);
   process.exit(1);
 });
 
-// Graceful shutdown
+/**
+ * Graceful shutdown handlers
+ */
 process.on('SIGTERM', () => {
   logger.info('SIGTERM signal received: closing HTTP server');
   process.exit(0);
@@ -57,4 +62,3 @@ process.on('SIGINT', () => {
 
 // Start the server
 startServer();
-

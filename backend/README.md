@@ -21,8 +21,9 @@ cp .env.example .env
 # Edit .env with your credentials
 nano .env
 
-# Run database migrations
-psql invoice_ocr < ../database/schema.sql
+# Set up database
+npm run db:setup
+# Or manually: psql -U postgres -f scripts/setup-database.sql
 
 # Start development server
 npm run dev
@@ -32,21 +33,37 @@ The API will be available at `http://localhost:3000`
 
 ## 📁 Project Structure
 
+**Modular Architecture** - Each feature is self-contained in its own module.
+
 ```
 backend/
 ├── src/
-│   ├── controllers/       # Request handlers
-│   ├── services/          # Business logic
-│   ├── repositories/      # Database access
-│   ├── middleware/        # Express middleware
-│   ├── utils/             # Utilities (logger, database)
+│   ├── modules/           # Feature modules (modular architecture)
+│   │   └── auth/          # Authentication module
+│   │       ├── auth.controller.ts
+│   │       ├── auth.service.ts
+│   │       ├── auth.repository.ts
+│   │       ├── auth.routes.ts
+│   │       ├── auth.middleware.ts
+│   │       └── auth.validation.ts
+│   ├── config/            # Configuration files
+│   │   ├── db.ts          # Database connection
+│   │   ├── env.ts         # Environment variables
+│   │   └── jwt.ts         # JWT configuration
+│   ├── middleware/        # Global middleware
+│   ├── utils/             # Utilities (logger, hash, jwt)
+│   ├── constants/         # Application constants
 │   ├── types/             # TypeScript types
-│   └── index.ts           # Entry point
-├── tests/                 # Test files
+│   ├── routes/            # Route aggregator
+│   ├── app.ts             # Express app setup
+│   └── server.ts          # Server entry point
+├── scripts/               # Setup and utility scripts
+│   ├── setup-database.sql
+│   ├── setup-db.ps1
+│   └── test-db-connection.js
 ├── logs/                  # Log files (auto-generated)
 ├── package.json
 ├── tsconfig.json
-├── Dockerfile
 └── .env.example
 ```
 
@@ -60,17 +77,23 @@ npm test             # Run tests
 npm run test:watch   # Run tests in watch mode
 npm run lint         # Lint code
 npm run format       # Format code with Prettier
+npm run db:setup     # Set up database (run setup-database.sql)
+npm run db:test      # Test database connection
 ```
 
 ## 🔌 API Endpoints
 
 ### Health Check
+
 - `GET /health` - Server health status
 
-### Authentication (TODO)
+### Authentication ✅
+
 - `POST /api/v1/auth/register` - Register new user
 - `POST /api/v1/auth/login` - Login user
-- `GET /api/v1/auth/me` - Get current user
+- `POST /api/v1/auth/refresh` - Refresh access token
+- `GET /api/v1/auth/profile` - Get current user profile
+- `POST /api/v1/auth/logout` - Logout user
 
 ### Invoices (TODO)
 - `POST /api/v1/invoices` - Upload invoice

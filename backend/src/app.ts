@@ -28,32 +28,18 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/api', apiLimiter);
 
 // Request logging middleware
-app.use((req, _res, next) => {
-  logger.info(`${req.method} ${req.path}`, {
-    ip: req.ip,
-    userAgent: req.get('user-agent'),
-  });
-  next();
-});
-
-// Health check endpoint (outside API versioning)
-app.get('/health', (_req, res) => {
-  res.status(200).json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    service: 'invoice-ocr-api',
-    environment: env.NODE_ENV,
-  });
+app.use((req, _res, next) => { 
+	logger.info(`${req.method} ${req.path}`, { ip: req.ip, userAgent: req.get('user-agent') });
+	next(); 
 });
 
 // API routes
 app.use('/api/v1', routes);
 
-// 404 handler
+// Error handlers
 app.use(notFoundHandler);
 
 // Global error handler
 app.use(errorHandler);
 
 export default app;
-

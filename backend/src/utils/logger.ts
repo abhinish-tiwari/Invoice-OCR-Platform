@@ -1,49 +1,59 @@
 import winston from 'winston';
-
-const logLevel = process.env.LOG_LEVEL || 'info';
-
-export const logger = winston.createLogger({
-  level: logLevel,
-  format: winston.format.combine(
-    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-    winston.format.errors({ stack: true }),
-    winston.format.splat(),
-    winston.format.json()
-  ),
-  defaultMeta: { service: 'invoice-ocr-api' },
-  transports: [
-    // Console transport
-    new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.printf(({ timestamp, level, message, ...meta }) => {
-          return `${timestamp} [${level}]: ${message} ${
-            Object.keys(meta).length ? JSON.stringify(meta, null, 2) : ''
-          }`;
-        })
-      )
-    }),
-    // File transports
-    new winston.transports.File({
-      filename: 'logs/error.log',
-      level: 'error',
-      maxsize: 5242880, // 5MB
-      maxFiles: 5
-    }),
-    new winston.transports.File({
-      filename: 'logs/combined.log',
-      maxsize: 5242880, // 5MB
-      maxFiles: 5
-    })
-  ]
-});
-
-// Create logs directory if it doesn't exist
 import fs from 'fs';
 import path from 'path';
 
-const logsDir = path.join(__dirname, '../../logs');
-if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir, { recursive: true });
+// Constants
+const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
+const LOG_DIR = path.join(__dirname, '../../logs');
+const MAX_FILE_SIZE = 5242880; // 5MB
+const MAX_FILES = 5;
+
+// Ensure logs directory exists
+if (!fs.existsSync(LOG_DIR)) {
+  fs.mkdirSync(LOG_DIR, { recursive: true });
 }
 
+// Custom format for console output
+const consoleFormat = winston.format.combine(
+  winston.format.colorize(),
+  winston.format.printf(({ timestamp, level, message, ...meta }) => {
+    const metaString = Object.keys(meta).length 
+      ? JSON.stringify(meta, null, 2) 
+      : '';
+    return `${timestamp} [${level}]: ${message} ${metaString}`;
+  })
+);
+
+// Base format for all transports
+const baseFormat = winston.format.combine(
+  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+  winston.format.errors({ stack: true }),
+  winston.format.splat(),
+  winston.format.json()
+);
+
+// Logger configuration
+export const logger = winston.createLogger({
+  level: LOG_LEVEL,
+  format: baseFormat,
+  defaultMeta: { service: 'invoice-ocr-api' },
+  transports: [
+    // Console transport with custom formatting
+    new winston.transports.Console({
+      format: consoleFormat
+    }),
+    // Error log file
+    new winston.transports.File({
+      filename: path.join(LOG_DIR, 'error.log'),
+      level: 'error',
+      maxsize: MAX_FILE_SIZE,
+      maxFiles: MAX_FILES
+    }),
+    // Combined log file
+    new winston.transports.File({
+      filename: path.join(LOG_DIR, 'combined.log'),
+      maxsize: MAX_FILE_SIZE,
+      maxFiles: MAX_FILES
+    })
+  ]
+});

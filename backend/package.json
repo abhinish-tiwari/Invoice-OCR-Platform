@@ -2,16 +2,17 @@
   "name": "invoice-ocr-backend",
   "version": "1.0.0",
   "description": "Invoice OCR Platform - Backend API",
-  "main": "dist/index.js",
+  "main": "dist/server.js",
   "scripts": {
-    "dev": "nodemon --exec ts-node src/server.ts",
+    "dev": "nodemon --exec ts-node --transpile-only src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
+    "lint": "eslint src/**/*.ts --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
     "test": "jest",
     "test:watch": "jest --watch",
-    "lint": "eslint src/**/*.ts",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "db:migrate": "psql -U postgres -d invoice_ocr -f src/db/migrations/001_create_users_table.sql"
+    "db:setup": "psql -U postgres -f scripts/setup-database.sql",
+    "db:test": "node scripts/test-db-connection.js"
   },
   "keywords": [
     "invoice",

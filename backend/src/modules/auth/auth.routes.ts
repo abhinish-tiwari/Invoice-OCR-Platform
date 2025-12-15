@@ -1,11 +1,7 @@
 import { Router } from 'express';
-import authController from './auth.controller';
+import AuthController from './auth.controller';
 import { authenticate, validate } from './auth.middleware';
-import {
-  registerSchema,
-  loginSchema,
-  refreshTokenSchema,
-} from './auth.validation';
+import { registerSchema, loginSchema, refreshTokenSchema } from './auth.validation';
 import { authLimiter } from '../../middleware/rateLimit.middleware';
 
 const router = Router();
@@ -15,57 +11,38 @@ const router = Router();
  * @desc    Register a new user
  * @access  Public
  */
-router.post(
-  '/register',
-  authLimiter,
-  validate(registerSchema),
-  authController.register
-);
+router.post('/register', authLimiter, validate(registerSchema), AuthController.register);
 
 /**
  * @route   POST /api/v1/auth/login
  * @desc    Login user
  * @access  Public
  */
-router.post(
-  '/login',
-  authLimiter,
-  validate(loginSchema),
-  authController.login
-);
+router.post('/login', authLimiter, validate(loginSchema), AuthController.login);
 
 /**
  * @route   POST /api/v1/auth/refresh
  * @desc    Refresh access token
  * @access  Public
  */
-router.post(
-  '/refresh',
-  validate(refreshTokenSchema),
-  authController.refreshToken
-);
+router.post('/refresh', validate(refreshTokenSchema), AuthController.refreshToken);
+
+/**
+ * Protected Routes
+ */
 
 /**
  * @route   GET /api/v1/auth/profile
  * @desc    Get current user profile
  * @access  Private
  */
-router.get(
-  '/profile',
-  authenticate,
-  authController.getProfile
-);
+router.get('/profile', authenticate, AuthController.getProfile);
 
 /**
  * @route   POST /api/v1/auth/logout
  * @desc    Logout user
  * @access  Private
  */
-router.post(
-  '/logout',
-  authenticate,
-  authController.logout
-);
+router.post('/logout', authenticate, AuthController.logout);
 
 export default router;
-

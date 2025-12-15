@@ -1,17 +1,71 @@
-import jwt, { SignOptions } from 'jsonwebtoken';
+import jwt, { SignOptions, VerifyOptions } from 'jsonwebtoken';
 import { jwtConfig } from '../config/jwt';
 import { logger } from './logger';
 
 export interface JwtPayload {
-  userId: string;
-  email: string;
-  role?: string;
+	userId: string;
+	email: string;
+	role?: string;
 }
 
 export interface TokenPair {
-  accessToken: string;
-  refreshToken: string;
+	accessToken: string;
+	refreshToken: string;
 }
+
+/**
+ * Common sign options for JWT tokens
+ */
+const getSignOptions = (): SignOptions => ({
+	algorithm: jwtConfig.algorithm,
+	issuer: jwtConfig.issuer,
+	audience: jwtConfig.audience,
+});
+
+/**
+ * Common verify options for JWT tokens
+ */
+const getVerifyOptions = (): VerifyOptions => ({
+	algorithms: [jwtConfig.algorithm],
+	issuer: jwtConfig.issuer,
+	audience: jwtConfig.audience,
+});
+
+/**
+ * Generate a JWT token
+ * @param payload - JWT payload
+ * @param secret - Secret key
+ * @param expiresIn - Token expiration time
+ * @param tokenType - Type of token (for logging)
+ * @returns JWT token
+ */
+const generateToken = (payload: JwtPayload, secret: string, expiresIn: string, tokenType: string): string => {
+	try {
+		return jwt.sign(payload, secret, {
+			...getSignOptions(),
+			expiresIn,
+		} as SignOptions);
+	} catch (error) {
+		logger.error(`Error generating ${tokenType}:`, error);
+		throw new Error(`Failed to generate ${tokenType}`);
+	}
+};
+
+/**
+ * Verify a JWT token
+ * @param token - JWT token
+ * @param secret - Secret key
+ * @param tokenType - Type of token (for logging)
+ * @returns Decoded payload
+ */
+const verifyToken = (token: string, secret: string, tokenType: string): JwtPayload => {
+	try {
+		return jwt.verify(token, secret, getVerifyOptions()) as JwtPayload;
+	} catch (error) {
+		logger.error(`Error verifying ${tokenType}:`, error);
+		throw new Error(`Invalid or expired ${tokenType}`);
+	}
+};
 
 /**
  * Generate an access token
@@ -19,18 +73,7 @@ export interface TokenPair {
  * @returns Access token
  */
 export const generateAccessToken = (payload: JwtPayload): string => {
-  try {
-    const token = jwt.sign(payload, jwtConfig.secret, {
-      expiresIn: jwtConfig.expiresIn,
-      algorithm: jwtConfig.algorithm,
-      issuer: jwtConfig.issuer,
-      audience: jwtConfig.audience,
-    } as SignOptions);
-    return token;
-  } catch (error) {
-    logger.error('Error generating access token:', error);
-    throw new Error('Failed to generate access token');
-  }
+	return generateToken(payload, jwtConfig.secret, jwtConfig.expiresIn, 'access token');
 };
 
 /**
@@ -39,18 +82,7 @@ export const generateAccessToken = (payload: JwtPayload): string => {
  * @returns Refresh token
  */
 export const generateRefreshToken = (payload: JwtPayload): string => {
-  try {
-    const token = jwt.sign(payload, jwtConfig.refreshSecret, {
-      expiresIn: jwtConfig.refreshExpiresIn,
-      algorithm: jwtConfig.algorithm,
-      issuer: jwtConfig.issuer,
-      audience: jwtConfig.audience,
-    } as SignOptions);
-    return token;
-  } catch (error) {
-    logger.error('Error generating refresh token:', error);
-    throw new Error('Failed to generate refresh token');
-  }
+	return generateToken(payload, jwtConfig.refreshSecret, jwtConfig.refreshExpiresIn, 'refresh token');
 };
 
 /**
@@ -59,10 +91,10 @@ export const generateRefreshToken = (payload: JwtPayload): string => {
  * @returns Token pair
  */
 export const generateTokenPair = (payload: JwtPayload): TokenPair => {
-  return {
-    accessToken: generateAccessToken(payload),
-    refreshToken: generateRefreshToken(payload),
-  };
+	return {
+		accessToken: generateAccessToken(payload),
+		refreshToken: generateRefreshToken(payload),
+	};
 };
 
 /**
@@ -71,17 +103,7 @@ export const generateTokenPair = (payload: JwtPayload): TokenPair => {
  * @returns Decoded payload
  */
 export const verifyAccessToken = (token: string): JwtPayload => {
-  try {
-    const decoded = jwt.verify(token, jwtConfig.secret, {
-      algorithms: [jwtConfig.algorithm],
-      issuer: jwtConfig.issuer,
-      audience: jwtConfig.audience,
-    }) as JwtPayload;
-    return decoded;
-  } catch (error) {
-    logger.error('Error verifying access token:', error);
-    throw new Error('Invalid or expired access token');
-  }
+	return verifyToken(token, jwtConfig.secret, 'access token');
 };
 
 /**
@@ -90,34 +112,14 @@ export const verifyAccessToken = (token: string): JwtPayload => {
  * @returns Decoded payload
  */
 export const verifyRefreshToken = (token: string): JwtPayload => {
-  try {
-    const decoded = jwt.verify(token, jwtConfig.refreshSecret, {
-      algorithms: [jwtConfig.algorithm],
-      issuer: jwtConfig.issuer,
-      audience: jwtConfig.audience,
-    }) as JwtPayload;
-    return decoded;
-  } catch (error) {
-    logger.error('Error verifying refresh token:', error);
-    throw new Error('Invalid or expired refresh token');
-  }
+	return verifyToken(token, jwtConfig.refreshSecret, 'refresh token');
 };
 
 /**
  * Decode a token without verification (for debugging)
  * @param token - JWT token
- * @returns Decoded payload
+ * @returns Decoded payload or null
  */
-export const decodeToken = (token: string): any => {
-  return jwt.decode(token);
+export const decodeToken = (token: string): JwtPayload | null => {
+	return jwt.decode(token) as JwtPayload | null;
 };
-
-export default {
-  generateAccessToken,
-  generateRefreshToken,
-  generateTokenPair,
-  verifyAccessToken,
-  verifyRefreshToken,
-  decodeToken,
-};
-

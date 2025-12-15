@@ -22,11 +22,9 @@ export interface CreateUserData {
   company?: string;
 }
 
-export class AuthRepository {
-  /**
-   * Create a new user
-   */
-  async createUser(userData: CreateUserData): Promise<User> {
+export default class AuthRepository {
+  
+  static async createUser(userData: CreateUserData): Promise<User> {
     const query = `
       INSERT INTO users (email, password, first_name, last_name, company, role)
       VALUES ($1, $2, $3, $4, $5, $6)
@@ -44,7 +42,7 @@ export class AuthRepository {
 
     try {
       const result = await pool.query(query, values);
-      logger.info('User created successfully', { userId: result.rows[0].id });
+      logger.info('User created successfully', { userId: result?.rows?.[0]?.id });
       return result.rows[0];
     } catch (error) {
       logger.error('Error creating user:', error);
@@ -55,7 +53,7 @@ export class AuthRepository {
   /**
    * Find user by email
    */
-  async findByEmail(email: string): Promise<User | null> {
+  static async findByEmail(email: string): Promise<User | null> {
     const query = `
       SELECT id, email, password, first_name, last_name, company, role, is_verified, created_at, updated_at
       FROM users
@@ -74,7 +72,7 @@ export class AuthRepository {
   /**
    * Find user by ID
    */
-  async findById(id: string): Promise<User | null> {
+  static async findById(id: string): Promise<User | null> {
     const query = `
       SELECT id, email, password, first_name, last_name, company, role, is_verified, created_at, updated_at
       FROM users
@@ -93,7 +91,7 @@ export class AuthRepository {
   /**
    * Update user's last login timestamp
    */
-  async updateLastLogin(userId: string): Promise<void> {
+  static async updateLastLogin(userId: string): Promise<void> {
     const query = `
       UPDATE users
       SET last_login = NOW()
@@ -112,7 +110,7 @@ export class AuthRepository {
   /**
    * Verify user's email
    */
-  async verifyEmail(userId: string): Promise<void> {
+  static async verifyEmail(userId: string): Promise<void> {
     const query = `
       UPDATE users
       SET is_verified = true
@@ -131,7 +129,7 @@ export class AuthRepository {
   /**
    * Update user's password
    */
-  async updatePassword(userId: string, hashedPassword: string): Promise<void> {
+  static async updatePassword(userId: string, hashedPassword: string): Promise<void> {
     const query = `
       UPDATE users
       SET password = $1, updated_at = NOW()
@@ -147,6 +145,3 @@ export class AuthRepository {
     }
   }
 }
-
-export default new AuthRepository();
-
