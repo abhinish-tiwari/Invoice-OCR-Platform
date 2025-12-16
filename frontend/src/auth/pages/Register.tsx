@@ -4,7 +4,7 @@ import { InputField } from '../../common/forms/components/InputField';
 import { useFormSection } from '../../common/forms/hooks/useFormSection';
 import Button from '../../common/components/Button';
 import Form from '../../common/components/Form';
-import { AuthService } from '../services/auth.service';
+import { useAuth } from '../hooks/useAuth';
 import { RegexPatterns } from '../../common/constants/regex-patterns';
 
 interface RegisterFormData {
@@ -17,6 +17,7 @@ interface RegisterFormData {
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
+  const { register } = useAuth();
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [termsError, setTermsError] = useState<string>('');
   const [generalError, setGeneralError] = useState<string>('');
@@ -50,7 +51,7 @@ const RegisterPage: React.FC = () => {
 
     setIsLoading(true);
 
-    const result = await AuthService.register({
+    const result = await register({
       ...formData,
       agreeToTerms,
     });

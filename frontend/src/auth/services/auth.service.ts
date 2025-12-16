@@ -22,14 +22,15 @@ export class AuthService {
   }
 
   static async getCurrentUser(): Promise<ApiResponse> {
-    return await ApiService.get<ApiResponse>('/auth/me');
+    return await ApiService.get<ApiResponse>('/auth/profile');
   }
 
   static async login(email: string, password: string, rememberMe?: boolean): Promise<AuthResult> {
     try {
       const response = await this.loginApi({ email, password, rememberMe });
-      if (response.success && response.data?.token) {
-        Token.set(response.data.token);
+	  const tokens = response.data?.tokens;
+      if (response.success && tokens?.accessToken) {
+        Token.set(tokens.accessToken);
         return { success: true };
       }
       return { success: false, error: response.message || 'Login failed' };
@@ -41,10 +42,11 @@ export class AuthService {
   static async register(data: RegisterData): Promise<AuthResult> {
     try {
       const response = await this.registerApi(data);
-      if (response.success && response.data?.token) {
-        Token.set(response.data.token);
+	  const tokens = response.data?.tokens;
+      if (response.success && tokens?.accessToken) {
+        Token.set(tokens.accessToken);
         return { success: true };
-      }
+      }	
       return { success: false, error: response.message || 'Registration failed' };
     } catch (error: any) {
       return { success: false, error: error.message || 'Registration failed. Please try again.' };

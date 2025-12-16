@@ -38,9 +38,18 @@ This is your complete guide to the Invoice OCR Platform specification. Start her
 
 ### Database
 
+**[DATABASE_COMMANDS.md](DATABASE_COMMANDS.md)** (550+ lines)
+- **NPM Scripts** - Database setup and testing commands
+- **Connection Details** - Database credentials and configuration
+- **PostgreSQL Commands** - All database operations
+- **Complete Schema Reference** - All 10 tables with detailed columns
+- **Common SQL Queries** - Ready-to-use queries for users, invoices, products
+- **Database Maintenance** - Backup, restore, optimization
+- **psql Meta-Commands** - Quick reference for psql
+
 **[database/schema.sql](database/schema.sql)**
 - Complete PostgreSQL schema
-- 9 tables with relationships
+- 10 tables with relationships
 - Indexes for performance
 - Constraints and validations
 - Ready to execute
@@ -51,6 +60,7 @@ This is your complete guide to the Invoice OCR Platform specification. Start her
 - `products` - Product catalog
 - `invoices` - Invoice metadata
 - `invoice_lines` - Line items
+- `invoice_items` - Legacy line items
 - `price_history` - Historical pricing
 - `product_aliases` - Learned mappings
 - `ocr_results` - Raw OCR data
@@ -195,8 +205,10 @@ This is your complete guide to the Invoice OCR Platform specification. Start her
 → Read [README.md](README.md) for overview
 
 ### "I want to set up the database"
-→ Execute [database/schema.sql](database/schema.sql)  
+→ Read [DATABASE_COMMANDS.md](DATABASE_COMMANDS.md) for all commands
+→ Execute [database/schema.sql](database/schema.sql)
 → Review table relationships in PROJECT_SUMMARY.md
+→ Use common SQL queries from DATABASE_COMMANDS.md
 
 ### "I want to build the API"
 → Read [docs/API_DESIGN.md](docs/API_DESIGN.md) for endpoints  
@@ -235,9 +247,9 @@ This is your complete guide to the Invoice OCR Platform specification. Start her
 |----------|-------|-------|--------|
 | **Core Docs** | 3 | 1,000+ | ✅ Complete |
 | **Technical Specs** | 6 | 4,000+ | ✅ Complete |
-| **Database** | 1 | 150+ | ✅ Complete |
+| **Database** | 2 | 700+ | ✅ Complete |
 | **Diagrams** | 2 | Visual | ✅ Complete |
-| **Total** | **12** | **5,000+** | ✅ Complete |
+| **Total** | **13** | **5,700+** | ✅ Complete |
 
 ---
 

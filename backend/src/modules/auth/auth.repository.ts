@@ -5,9 +5,8 @@ export interface User {
   id: string;
   email: string;
   password: string;
-  first_name: string;
-  last_name: string;
-  company?: string;
+  full_name?: string;
+  company_name?: string;
   role: string;
   is_verified: boolean;
   created_at: Date;
@@ -17,26 +16,24 @@ export interface User {
 export interface CreateUserData {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
-  company?: string;
+  fullName?: string;
+  companyName?: string;
 }
 
 export default class AuthRepository {
-  
+
   static async createUser(userData: CreateUserData): Promise<User> {
     const query = `
-      INSERT INTO users (email, password, first_name, last_name, company, role)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING id, email, first_name, last_name, company, role, is_verified, created_at, updated_at
+      INSERT INTO users (email, password, full_name, company_name, role)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING id, email, full_name, company_name, role, is_verified, created_at, updated_at
     `;
 
     const values = [
       userData.email,
       userData.password,
-      userData.firstName,
-      userData.lastName,
-      userData.company || null,
+      userData.fullName || null,
+      userData.companyName || null,
       'user', // Default role
     ];
 
@@ -55,7 +52,7 @@ export default class AuthRepository {
    */
   static async findByEmail(email: string): Promise<User | null> {
     const query = `
-      SELECT id, email, password, first_name, last_name, company, role, is_verified, created_at, updated_at
+      SELECT id, email, password, full_name, company_name, role, is_verified, created_at, updated_at
       FROM users
       WHERE email = $1
     `;
@@ -74,7 +71,7 @@ export default class AuthRepository {
    */
   static async findById(id: string): Promise<User | null> {
     const query = `
-      SELECT id, email, password, first_name, last_name, company, role, is_verified, created_at, updated_at
+      SELECT id, email, password, full_name, company_name, role, is_verified, created_at, updated_at
       FROM users
       WHERE id = $1
     `;

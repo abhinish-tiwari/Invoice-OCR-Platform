@@ -16,15 +16,14 @@ export const registerSchema = z.object({
       .string({ required_error: MESSAGES.VALIDATION_MESSAGES.REQUIRED_FIELD })
       .min(8, MESSAGES.AUTH_MESSAGES.WEAK_PASSWORD)
       .regex(PASSWORD_REGEX, MESSAGES.VALIDATION_MESSAGES.INVALID_PASSWORD),
-    firstName: z
+    fullName: z
       .string({ required_error: MESSAGES.VALIDATION_MESSAGES.REQUIRED_FIELD })
-      .min(2, MESSAGES.VALIDATION_MESSAGES.MIN_LENGTH)
-      .max(50, MESSAGES.VALIDATION_MESSAGES.MAX_LENGTH),
-    lastName: z
-      .string({ required_error: MESSAGES.VALIDATION_MESSAGES.REQUIRED_FIELD })
-      .min(2, MESSAGES.VALIDATION_MESSAGES.MIN_LENGTH)
-      .max(50, MESSAGES.VALIDATION_MESSAGES.MAX_LENGTH),
-    company: z.string().optional(),
+      .min(3, MESSAGES.VALIDATION_MESSAGES.MIN_LENGTH)
+      .max(255, MESSAGES.VALIDATION_MESSAGES.MAX_LENGTH),
+    companyName: z.string().optional(),
+	agreeToTerms: z.boolean().refine((value) => value, {
+      message: 'You must agree to the terms and conditions',
+    }),
   }),
 });
 
