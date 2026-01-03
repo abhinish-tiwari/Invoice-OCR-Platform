@@ -73,35 +73,84 @@ const DashboardPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200 hover:shadow-lg transition-shadow duration-200">
+            <button
+              onClick={() => navigate('/invoices/upload')}
+              className="text-left bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200 hover:shadow-lg transition-shadow duration-200"
+            >
               <div className="text-4xl mb-3">📤</div>
               <h3 className="text-lg font-semibold text-gray-800 mb-2">Upload Invoices</h3>
               <p className="text-sm text-gray-600">
                 Upload and process your invoices with AI-powered OCR
               </p>
-            </div>
+            </button>
 
-            <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-6 rounded-lg border border-indigo-200 hover:shadow-lg transition-shadow duration-200">
+            <button
+              onClick={() => navigate('/invoices')}
+              className="text-left bg-gradient-to-br from-indigo-50 to-indigo-100 p-6 rounded-lg border border-indigo-200 hover:shadow-lg transition-shadow duration-200"
+            >
+              <div className="text-4xl mb-3">🧾</div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">View Invoices</h3>
+              <p className="text-sm text-gray-600">
+                Browse and manage all your uploaded invoices
+              </p>
+            </button>
+
+            <button
+              onClick={() => navigate('/products')}
+              className="text-left bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg border border-green-200 hover:shadow-lg transition-shadow duration-200"
+            >
+              <div className="text-4xl mb-3">📦</div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">Products</h3>
+              <p className="text-sm text-gray-600">
+                Manage your product catalog for invoice matching
+              </p>
+            </button>
+
+            <button
+              onClick={() => navigate('/suppliers')}
+              className="text-left bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-lg border border-orange-200 hover:shadow-lg transition-shadow duration-200"
+            >
+              <div className="text-4xl mb-3">🏢</div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">Suppliers</h3>
+              <p className="text-sm text-gray-600">
+                Manage your supplier directory
+              </p>
+            </button>
+
+            <button
+              onClick={() => navigate('/analytics')}
+              className="text-left bg-gradient-to-br from-purple-50 to-indigo-100 p-6 rounded-lg border border-purple-200 hover:shadow-lg transition-shadow duration-200"
+            >
               <div className="text-4xl mb-3">📊</div>
               <h3 className="text-lg font-semibold text-gray-800 mb-2">Analytics</h3>
               <p className="text-sm text-gray-600">
-                View insights and analytics from your invoice data
+                View insights and analytics
               </p>
-            </div>
+            </button>
 
-            <div className="bg-gradient-to-br from-purple-50 to-indigo-100 p-6 rounded-lg border border-purple-200 hover:shadow-lg transition-shadow duration-200">
+            {user?.role === 'admin' && (
+              <button
+                onClick={() => navigate('/admin')}
+                className="text-left bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-lg border border-red-200 hover:shadow-lg transition-shadow duration-200"
+              >
+                <div className="text-4xl mb-3">🛡️</div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">Admin Panel</h3>
+                <p className="text-sm text-gray-600">
+                  Manage users and system settings
+                </p>
+              </button>
+            )}
+
+            <button
+              onClick={() => navigate('/settings')}
+              className="text-left bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-lg border border-gray-200 hover:shadow-lg transition-shadow duration-200"
+            >
               <div className="text-4xl mb-3">⚙️</div>
               <h3 className="text-lg font-semibold text-gray-800 mb-2">Settings</h3>
               <p className="text-sm text-gray-600">
-                Manage your account and preferences
+                Manage your profile and preferences
               </p>
-            </div>
-          </div>
-
-          <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-800">
-              <strong>Note:</strong> This is a placeholder dashboard. The full dashboard features are under development.
-            </p>
+            </button>
           </div>
         </div>
       </main>

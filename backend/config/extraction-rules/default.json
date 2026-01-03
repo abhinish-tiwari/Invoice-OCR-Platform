@@ -1,0 +1,79 @@
+{
+  "name": "default",
+  "version": "1.0.0",
+  "headerPatterns": {
+    "invoiceNumber": [
+      "invoice\\s*(?:#|no\\.?|number)?:?\\s*([A-Z0-9\\-]+)",
+      "inv\\s*(?:#|no\\.?)?:?\\s*([A-Z0-9\\-]+)",
+      "(?:^|\\s)#\\s*(\\d{5,})"
+    ],
+    "date": [
+      "(?:date|dated?|invoice\\s*date):?\\s*(\\d{1,2}[\\/\\-\\.]\\d{1,2}[\\/\\-\\.]\\d{2,4})",
+      "(\\d{1,2}[\\/\\-\\.]\\d{1,2}[\\/\\-\\.]\\d{2,4})",
+      "(\\d{4}[\\/\\-\\.]\\d{1,2}[\\/\\-\\.]\\d{1,2})"
+    ],
+    "total": [
+      "(?:total|grand\\s*total|amount\\s*due|balance\\s*due):?\\s*[\\$€£]?\\s*([\\d,]+\\.?\\d{0,2})",
+      "(?:total|sum):?\\s*([\\d,]+[.,]\\d{2})"
+    ],
+    "subtotal": [
+      "(?:subtotal|sub\\s*total|net\\s*worth):?\\s*[\\$€£]?\\s*([\\d,]+\\.?\\d{0,2})"
+    ],
+    "tax": [
+      "(?:tax|vat|gst):?\\s*[\\$€£]?\\s*([\\d,]+\\.?\\d{0,2})",
+      "(?:tax|vat)\\s*\\(?\\d+%?\\)?:?\\s*[\\$€£]?\\s*([\\d,]+\\.?\\d{0,2})"
+    ],
+    "vendor": [
+      "^([A-Z][A-Za-z\\s&]+(?:Inc\\.?|LLC|Ltd\\.?|Corp\\.?)?)"
+    ]
+  },
+  "tableHeaderKeywords": [
+    "description",
+    "item",
+    "product",
+    "service",
+    "particulars",
+    "qty",
+    "quantity",
+    "units",
+    "no.",
+    "price",
+    "rate",
+    "unit price",
+    "net price",
+    "amount",
+    "total",
+    "net worth",
+    "gross"
+  ],
+  "excludeKeywords": [
+    "invoice",
+    "bill",
+    "date",
+    "from",
+    "to",
+    "address",
+    "phone",
+    "email",
+    "payment",
+    "due",
+    "terms",
+    "thank",
+    "page",
+    "customer",
+    "client",
+    "seller",
+    "buyer",
+    "ship",
+    "bank",
+    "account",
+    "iban",
+    "tax id"
+  ],
+  "minConfidence": 0.5,
+  "lineItemPatterns": [
+    "^(\\d+)[\\.)\\s]\\s*(.+?)\\s+(\\d+)\\s+\\w*\\s*([\\d,\\.]+)\\s+([\\d,\\.]+)",
+    "^(.+?)\\s+(\\d+)\\s+[\\$€£]?([\\d,\\.]+)\\s+[\\$€£]?([\\d,\\.]+)$",
+    "^([A-Za-z][A-Za-z0-9\\s\\-\\/]+?)\\s+[\\$€£]?([\\d,\\.]+)$"
+  ]
+}

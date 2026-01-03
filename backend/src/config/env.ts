@@ -30,9 +30,10 @@ export const env: EnvConfig = {
   JWT_REFRESH_EXPIRES_IN: getEnvVariable('JWT_REFRESH_EXPIRES_IN', '7d'),
 
   AWS_REGION: getEnvVariable('AWS_REGION', 'us-east-1'),
-  AWS_ACCESS_KEY_ID: getEnvVariable('AWS_ACCESS_KEY_ID'),
-  AWS_SECRET_ACCESS_KEY: getEnvVariable('AWS_SECRET_ACCESS_KEY'),
-  AWS_S3_BUCKET: getEnvVariable('AWS_S3_BUCKET'),
+  AWS_ACCESS_KEY_ID: getEnvVariable('AWS_ACCESS_KEY_ID', 'placeholder'),
+  AWS_SECRET_ACCESS_KEY: getEnvVariable('AWS_SECRET_ACCESS_KEY', 'placeholder'),
+  AWS_S3_BUCKET: getEnvVariable('AWS_S3_BUCKET', 'invoice-ocr-files'),
 
+  STORAGE_MODE: getEnvVariable('STORAGE_MODE', 'local') as 'local' | 's3',
   LOG_LEVEL: getEnvVariable('LOG_LEVEL', 'info'),
 };

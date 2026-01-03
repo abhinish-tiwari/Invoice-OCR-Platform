@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS invoices (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create invoice_items table
+-- Create invoice_items table (legacy - keeping for backward compatibility)
 CREATE TABLE IF NOT EXISTS invoice_items (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   invoice_id UUID NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
@@ -74,12 +74,75 @@ CREATE TABLE IF NOT EXISTS invoice_items (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Create suppliers table
+CREATE TABLE IF NOT EXISTS suppliers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(255) NOT NULL,
+  normalized_name VARCHAR(255) NOT NULL,
+  contact_email VARCHAR(255),
+  contact_phone VARCHAR(50),
+  metadata JSONB DEFAULT '{}',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create products table
+CREATE TABLE IF NOT EXISTS products (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(255) NOT NULL,
+  normalized_name VARCHAR(255) NOT NULL,
+  pack_size VARCHAR(100),
+  category VARCHAR(100),
+  unit VARCHAR(50),
+  metadata JSONB DEFAULT '{}',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create product_aliases table (for learning invoice text to product mappings)
+CREATE TABLE IF NOT EXISTS product_aliases (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  raw_text TEXT NOT NULL,
+  normalized_text VARCHAR(255) NOT NULL,
+  match_count INTEGER DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create invoice_lines table (new detailed line items with product matching)
+CREATE TABLE IF NOT EXISTS invoice_lines (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  invoice_id UUID NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
+  product_id UUID REFERENCES products(id) ON DELETE SET NULL,
+  line_number INTEGER NOT NULL,
+  raw_description TEXT NOT NULL,
+  normalized_description VARCHAR(255),
+  pack_size VARCHAR(100),
+  quantity DECIMAL(10, 3),
+  unit_price DECIMAL(10, 2),
+  line_total DECIMAL(10, 2),
+  confidence_score DECIMAL(3, 2),
+  needs_review BOOLEAN DEFAULT false,
+  reviewed BOOLEAN DEFAULT false,
+  metadata JSONB DEFAULT '{}',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_invoices_user_id ON invoices(user_id);
 CREATE INDEX IF NOT EXISTS idx_invoices_status ON invoices(status);
 CREATE INDEX IF NOT EXISTS idx_invoices_created_at ON invoices(created_at);
 CREATE INDEX IF NOT EXISTS idx_invoice_items_invoice_id ON invoice_items(invoice_id);
+CREATE INDEX IF NOT EXISTS idx_suppliers_normalized_name ON suppliers(normalized_name);
+CREATE INDEX IF NOT EXISTS idx_products_normalized_name ON products(normalized_name);
+CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
+CREATE INDEX IF NOT EXISTS idx_product_aliases_product_id ON product_aliases(product_id);
+CREATE INDEX IF NOT EXISTS idx_product_aliases_normalized_text ON product_aliases(normalized_text);
+CREATE INDEX IF NOT EXISTS idx_invoice_lines_invoice_id ON invoice_lines(invoice_id);
+CREATE INDEX IF NOT EXISTS idx_invoice_lines_product_id ON invoice_lines(product_id);
 
 -- Grant table privileges to the user
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO invoice_ocr_user;
@@ -102,6 +165,40 @@ CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
 DROP TRIGGER IF EXISTS update_invoices_updated_at ON invoices;
 CREATE TRIGGER update_invoices_updated_at BEFORE UPDATE ON invoices
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_suppliers_updated_at ON suppliers;
+CREATE TRIGGER update_suppliers_updated_at BEFORE UPDATE ON suppliers
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_products_updated_at ON products;
+CREATE TRIGGER update_products_updated_at BEFORE UPDATE ON products
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_product_aliases_updated_at ON product_aliases;
+CREATE TRIGGER update_product_aliases_updated_at BEFORE UPDATE ON product_aliases
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_invoice_lines_updated_at ON invoice_lines;
+CREATE TRIGGER update_invoice_lines_updated_at BEFORE UPDATE ON invoice_lines
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Add confidence_score column to invoices if not exists
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns
+                 WHERE table_name = 'invoices' AND column_name = 'confidence_score') THEN
+    ALTER TABLE invoices ADD COLUMN confidence_score DECIMAL(3, 2);
+  END IF;
+END $$;
+
+-- Add file_type column to invoices if not exists
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns
+                 WHERE table_name = 'invoices' AND column_name = 'file_type') THEN
+    ALTER TABLE invoices ADD COLUMN file_type VARCHAR(100);
+  END IF;
+END $$;
 
 -- Display success message
 SELECT 'Database setup completed successfully!' AS message;

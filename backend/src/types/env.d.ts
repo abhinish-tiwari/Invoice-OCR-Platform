@@ -21,5 +21,12 @@ export interface EnvConfig {
 		AWS_SECRET_ACCESS_KEY: string;
 		AWS_S3_BUCKET: string;
 
+		STORAGE_MODE: 'local' | 's3';
+
+		// AI Extraction (optional)
+		AI_EXTRACTION_PROVIDER?: 'openai' | 'anthropic';
+		OPENAI_API_KEY?: string;
+		OPENAI_MODEL?: string;
+
 		LOG_LEVEL: string;
 }

@@ -39,6 +39,20 @@ router.post('/refresh', validate(refreshTokenSchema), AuthController.refreshToke
 router.get('/profile', authenticate, AuthController.getProfile);
 
 /**
+ * @route   PUT /api/v1/auth/profile
+ * @desc    Update user profile
+ * @access  Private
+ */
+router.put('/profile', authenticate, AuthController.updateProfile);
+
+/**
+ * @route   PUT /api/v1/auth/password
+ * @desc    Change user password
+ * @access  Private
+ */
+router.put('/password', authenticate, AuthController.changePassword);
+
+/**
  * @route   POST /api/v1/auth/logout
  * @desc    Logout user
  * @access  Private

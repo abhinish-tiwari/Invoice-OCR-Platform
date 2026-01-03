@@ -82,4 +82,37 @@ export default class AuthController {
       message: MESSAGES.AUTH_MESSAGES.LOGOUT_SUCCESS,
     });
   });
+
+  /**
+   * Update user profile
+   * @route PUT /api/v1/auth/profile
+   * @access Private
+   */
+  static updateProfile = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const userId = (req as any).user.userId;
+    const { fullName, companyName } = req.body;
+    const user = await AuthService.updateProfile(userId, { fullName, companyName });
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: { user },
+    });
+  });
+
+  /**
+   * Change password
+   * @route PUT /api/v1/auth/password
+   * @access Private
+   */
+  static changePassword = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const userId = (req as any).user.userId;
+    const { currentPassword, newPassword } = req.body;
+    await AuthService.changePassword(userId, currentPassword, newPassword);
+
+    res.status(200).json({
+      success: true,
+      message: 'Password changed successfully',
+    });
+  });
 }

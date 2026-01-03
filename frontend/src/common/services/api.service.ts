@@ -28,6 +28,14 @@ export class ApiService {
 		return response.data;
 	}
 
+	static async getBlob(url: string, config?: AxiosRequestConfig): Promise<Blob> {
+		const response = await client.get(url, {
+			...config,
+			responseType: 'blob',
+		});
+		return response.data;
+	}
+
 	static cancelRequest(request: { abortController?: AbortController }) {
 		request.abortController?.abort();
 	}

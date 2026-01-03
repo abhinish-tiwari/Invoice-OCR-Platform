@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import path from 'path';
 import { env } from './config/env';
 import { logger } from './utils/logger';
 import routes from './routes';
@@ -9,8 +10,11 @@ import { apiLimiter } from './middleware/rateLimit.middleware';
 
 const app: Application = express();
 
-// Security middleware
-app.use(helmet());
+// Security middleware - configure helmet to allow images from same origin
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  contentSecurityPolicy: false, // Disable CSP for development
+}));
 
 // CORS configuration
 app.use(
@@ -26,6 +30,10 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Rate limiting
 app.use('/api', apiLimiter);
+
+// Serve uploaded files statically
+// Files are accessible at /uploads/invoices/filename
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Request logging middleware
 app.use((req, _res, next) => { 

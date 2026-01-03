@@ -20,7 +20,8 @@ export class ErrorHandler {
   private static handleResponse(error: AxiosError): Promise<never> {
     const status = error.response?.status || 0;
     const data = error.response?.data as any;
-    const message = data?.message || data?.error || error.message || 'An error occurred';
+    // Handle nested error object from backend: { error: { message, statusCode } }
+    const message = data?.message || data?.error?.message || (typeof data?.error === 'string' ? data.error : null) || error.message || 'An error occurred';
 
     if (Config.ENABLE_LOGGING) {
       console.group(`[HTTP Client] Error ${status}`);

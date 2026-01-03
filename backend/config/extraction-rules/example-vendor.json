@@ -1,0 +1,46 @@
+{
+  "vendorId": "example-vendor",
+  "name": "Example Vendor Config",
+  "version": "1.0.0",
+  "vendorNames": ["Example Corp", "Example Inc", "example.com"],
+  "headerPatterns": {
+    "invoiceNumber": [
+      "invoice\\s*#?:?\\s*([A-Z0-9\\-]+)",
+      "order\\s*#?:?\\s*([A-Z0-9\\-]+)"
+    ],
+    "date": [
+      "date:?\\s*(\\d{2}/\\d{2}/\\d{4})",
+      "invoice\\s*date:?\\s*(\\d{2}/\\d{2}/\\d{4})"
+    ],
+    "total": [
+      "total:?\\s*\\$?([\\d,]+\\.\\d{2})",
+      "amount\\s*due:?\\s*\\$?([\\d,]+\\.\\d{2})"
+    ],
+    "subtotal": [
+      "subtotal:?\\s*\\$?([\\d,]+\\.\\d{2})"
+    ],
+    "tax": [
+      "tax:?\\s*\\$?([\\d,]+\\.\\d{2})",
+      "vat:?\\s*\\$?([\\d,]+\\.\\d{2})"
+    ],
+    "vendor": [
+      "^(Example\\s+(?:Corp|Inc)\\.?)"
+    ]
+  },
+  "tableHeaderKeywords": [
+    "description", "item", "product",
+    "qty", "quantity",
+    "price", "unit price",
+    "amount", "total"
+  ],
+  "excludeKeywords": [
+    "invoice", "date", "bill to", "ship to",
+    "payment", "terms", "thank you"
+  ],
+  "minConfidence": 0.6,
+  "lineItemPatterns": [
+    "^(\\d+)\\s+(.+?)\\s+(\\d+)\\s+\\$?([\\d,\\.]+)\\s+\\$?([\\d,\\.]+)$",
+    "^(.+?)\\s{2,}(\\d+)\\s{2,}\\$?([\\d,\\.]+)\\s{2,}\\$?([\\d,\\.]+)$"
+  ]
+}
+

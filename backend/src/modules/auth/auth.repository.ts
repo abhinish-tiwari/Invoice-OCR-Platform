@@ -141,4 +141,48 @@ export default class AuthRepository {
       throw error;
     }
   }
+
+  /**
+   * Update user profile
+   */
+  static async updateProfile(userId: string, data: { fullName?: string; companyName?: string }): Promise<User | null> {
+    const updates: string[] = [];
+    const values: any[] = [];
+    let paramIndex = 1;
+
+    if (data.fullName !== undefined) {
+      updates.push(`full_name = $${paramIndex}`);
+      values.push(data.fullName);
+      paramIndex++;
+    }
+
+    if (data.companyName !== undefined) {
+      updates.push(`company_name = $${paramIndex}`);
+      values.push(data.companyName);
+      paramIndex++;
+    }
+
+    if (updates.length === 0) {
+      return this.findById(userId);
+    }
+
+    updates.push('updated_at = NOW()');
+    values.push(userId);
+
+    const query = `
+      UPDATE users
+      SET ${updates.join(', ')}
+      WHERE id = $${paramIndex}
+      RETURNING id, email, full_name, company_name, role, is_verified, created_at, updated_at
+    `;
+
+    try {
+      const result = await pool.query(query, values);
+      logger.info('Profile updated', { userId });
+      return result.rows[0] || null;
+    } catch (error) {
+      logger.error('Error updating profile:', error);
+      throw error;
+    }
+  }
 }

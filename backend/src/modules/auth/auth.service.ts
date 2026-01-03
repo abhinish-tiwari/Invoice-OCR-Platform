@@ -89,4 +89,27 @@ export default class AuthService {
     const { password, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }
+
+  /** Update user profile */
+  static async updateProfile(userId: string, data: { fullName?: string; companyName?: string }): Promise<Omit<User, 'password'>> {
+    const user = await AuthRepository.updateProfile(userId, data);
+    if (!user) throw new NotFoundError(MESSAGES.AUTH_MESSAGES.USER_NOT_FOUND);
+
+    logger.info('Profile updated successfully', { userId });
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  }
+
+  /** Change user password */
+  static async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
+    const user = await AuthRepository.findById(userId);
+    if (!user) throw new NotFoundError(MESSAGES.AUTH_MESSAGES.USER_NOT_FOUND);
+
+    const isPasswordValid = await comparePassword(currentPassword, user.password);
+    if (!isPasswordValid) throw new UnauthorizedError('Current password is incorrect');
+
+    const hashedPassword = await hashPassword(newPassword);
+    await AuthRepository.updatePassword(userId, hashedPassword);
+    logger.info('Password changed successfully', { userId });
+  }
 }
